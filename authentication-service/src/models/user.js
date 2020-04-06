@@ -34,10 +34,6 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    friends: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-    }], 
     tokens: [{
         token: {
             type: String,
@@ -47,18 +43,6 @@ const userSchema = new mongoose.Schema({
 },  {
     timestamps: true
 },)
-
-userSchema.virtual('galleries', {
-    ref: 'Gallery',
-    localField: '_id',
-    foreignField: 'author'
-})
-
-userSchema.virtual('comments', {
-    ref: 'Comment',
-    localField: '_id',
-    foreignField: 'userAuthor'
-})
 
 
 userSchema.methods.generateAuthToken = async function() {
