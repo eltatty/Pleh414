@@ -34,6 +34,43 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    role: {
+        type: String,
+        default: "player",
+        validate(value){
+            if(value !== "player" && value !== "official" && value !== "admin") { 
+                throw new Error('You must have a role.')
+            }
+        }
+    },
+    practice_wins: {
+        type: Number,
+        default: 0
+    },
+    practice_losses: {
+        type: Number,
+        default: 0
+    },
+    practice_ties: {
+        type: Number,
+        default: 0
+    },
+    practice_participations: {
+        type: Number,
+        default: 0
+    },
+    tournament_wins: {
+        type: Number,
+        default: 0
+    },
+    tournament_losses: {
+        type: Number,
+        default: 0
+    },
+    tournament_participations: {
+        type: Number,
+        default: 0
+    },
     tokens: [{
         token: {
             type: String,
@@ -43,7 +80,6 @@ const userSchema = new mongoose.Schema({
 },  {
     timestamps: true
 },)
-
 
 userSchema.methods.generateAuthToken = async function() {
     const user = this

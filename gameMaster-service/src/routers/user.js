@@ -10,9 +10,7 @@ router.get('/users', auth, async (req, res) => {
         const users = await User.find({})
         res.send(users)
     } catch (e) {
-        console.log()
         res.status(500).send()
     }
 })
-
 module.exports = router
