@@ -42,7 +42,11 @@ io.on('connection', (socket) => {
             const player1 = user.username
             const player2 = findToPlay(user.id)
             console.log(`${player1} wants to play with ${player2.username}`)
-            io.to(player2.id).emit('invite', player1)
+
+            const playRoom = "room123"
+            io.to(player2.id).emit('invite', playRoom)
+            // io.to(player1.id).emit('invite', playRoom)
+            callback(playRoom)
         }
         callback()
     })

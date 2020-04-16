@@ -2,10 +2,9 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3007", {
+const socket = io.connect("http://localhost:3006", {
     reconnection:true
 })
-
 
 socket.on('connect', function () {
     console.log('connected to localhost')
@@ -16,7 +15,8 @@ socket.on('message', (message) => {
 })
 
 socket.on('invite', (message) => {
-    console.log(message + ' wants to play!')
+    // console.log(message + ' wants to play!')
+    console.log(message)
 })
 
 document.querySelector('#join').addEventListener('click', () => {
@@ -32,9 +32,8 @@ document.querySelector('#join').addEventListener('click', () => {
 
 document.querySelector('#play').addEventListener('click', () => {
     console.log('Try to play')
-    socket.emit('play', (error) => {
-        if (error) {
-            alert(error)
-        }
+    socket.emit('play', (message) => {
+        console.log(message)
     })
 })
+
