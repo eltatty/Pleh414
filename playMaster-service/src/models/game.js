@@ -2,14 +2,16 @@ const mongoose = require('mongoose')
 
 const gameSchema = new mongoose.Schema({
     player1: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        type: String
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'User',
+        // required: true
     },
     player2: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        type: String
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'User',
+        // required: true
     },  
     moves: [{
         type: mongoose.Schema.Types.ObjectId,

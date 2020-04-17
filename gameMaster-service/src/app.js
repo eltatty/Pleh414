@@ -19,6 +19,7 @@ const room = "live"
 io.on('connection', (socket) => {
     console.log('New WebSocket connection')
 
+    // Auth
     socket.on('join', (options, callback) => {
         console.log(options)
 

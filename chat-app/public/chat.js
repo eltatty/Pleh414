@@ -2,7 +2,7 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3006", {
+const socket = io.connect("http://localhost:3007", {
     reconnection:true
 })
 
@@ -37,3 +37,17 @@ document.querySelector('#play').addEventListener('click', () => {
     })
 })
 
+document.querySelector('#create').addEventListener('click', () => {
+    console.log('Try to create')
+    socket.emit('create', (message) => {
+        console.log(message)
+    })
+})
+
+
+document.querySelector('#move').addEventListener('click', () => {
+    console.log('Try to move')
+    socket.emit('move', (message) => {
+        console.log(message)
+    })
+})
