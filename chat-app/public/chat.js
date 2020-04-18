@@ -21,9 +21,19 @@ socket.on('invite', (message) => {
 
 document.querySelector('#join').addEventListener('click', () => {
     console.log('Try to join')
-    const username = document.getElementById('username').value
-    console.log(username)
-    socket.emit('join', { username }, (error) => {
+    const username = document.getElementById('joker').value
+    // console.log(username)
+    // data = {
+    //     username: username, 
+    //     room: "5e9aae289d6e1216e6791f33"
+    // }
+    // socket.emit('join', data, (error) => {
+    //     if (error) {
+    //         alert(error)
+    //     }
+    // })
+
+    socket.emit('join', {username}, (error) => {
         if (error) {
             alert(error)
         }
@@ -32,7 +42,8 @@ document.querySelector('#join').addEventListener('click', () => {
 
 document.querySelector('#play').addEventListener('click', () => {
     console.log('Try to play')
-    socket.emit('play', (message) => {
+    const game = document.getElementById('joker').value
+    socket.emit('play', game, (message) => {
         console.log(message)
     })
 })
@@ -47,7 +58,12 @@ document.querySelector('#create').addEventListener('click', () => {
 
 document.querySelector('#move').addEventListener('click', () => {
     console.log('Try to move')
-    socket.emit('move', (message) => {
+    const move = document.getElementById('joker').value
+    data = {
+        move: move,
+        room: "5e9aae289d6e1216e6791f33"
+    }
+    socket.emit('move', data, (message) => {
         console.log(message)
     })
 })

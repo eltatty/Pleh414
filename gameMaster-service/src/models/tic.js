@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const chessSchema = new mongoose.Schema({
+const ticSchema = new mongoose.Schema({
     player1: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -14,7 +14,7 @@ const chessSchema = new mongoose.Schema({
     grid: [{
         cell: {
             type: String,
-            maxlength:2, 
+            maxlength:1,
             default: '-'
         }
     }],
@@ -33,6 +33,6 @@ const chessSchema = new mongoose.Schema({
     timestamps: true
 },)
 
-const Chess = mongoose.model('Chess', chessSchema)
+const Tic = mongoose.model('Tic', ticSchema)
 
-module.exports = Chess
+module.exports = Tic

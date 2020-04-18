@@ -23,10 +23,12 @@ const chessSchema = new mongoose.Schema({
     }, 
     winner: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true,
         ref: 'User' 
     }, 
     loser: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true,
         ref: 'User' 
     }
 },  {

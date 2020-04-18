@@ -3,6 +3,7 @@ const http = require('http')
 const socketio = require('socket.io')
 const User = require('./models/user')
 const Chess = require('./models/chess')
+const Tic = require('./models/tic')
 require("./db/mongoose")
 
 const { addUser, removeUser, getUser, findToPlay } = require('./utils/room')
@@ -35,12 +36,15 @@ io.on('connection', (socket) => {
         callback()
     })
 
-    socket.on('play', async (callback) => {
+    socket.on('play', async (data, callback) => {
         const { error, user } = getUser(socket.id)
 
         if (error) {
             return callback(error)
-        } else {
+        } else if( data !== "chess" && data !== "tic"){
+            return callback({error: "Tic or Chess!"})
+        }
+        else {
             const {error, player2} = findToPlay(user.id)
             
             if (!error){
@@ -49,19 +53,32 @@ io.on('connection', (socket) => {
 
                     const f1 = await User.findByName(user.username)
                     const f2 = await User.findByName(player2.username)
-
-                    const chess = new Chess({
-                        player1: f1._id,
-                        player2: f2._id
-                    })
-
-                    await chess.save()
-
-                    const playRoom = chess._id
                     
-                    io.to(player2.id).emit('invite', playRoom)
+                    if (data === "chess"){
+                        const chess = new Chess({
+                            player1: f1._id,
+                            player2: f2._id
+                        })
+    
+                        await chess.save()
+    
+                        const playRoom = chess._id
 
-                    return callback(playRoom)
+                        io.to(player2.id).emit('invite', playRoom)
+                        return callback(playRoom)
+                    } else {
+                        const tic = new Tic({
+                            player1: f1._id,
+                            player2: f2._id
+                        })
+    
+                        await tic.save()
+    
+                        const playRoom = tic._id
+
+                        io.to(player2.id).emit('invite', playRoom)
+                        return callback(playRoom)
+                    }
                 } catch (e) {
                     console.log(e)
                     return callback(e)
@@ -71,14 +88,14 @@ io.on('connection', (socket) => {
         callback({error: 'No partner was found.'})
     })
 
-    socket.on('disconnect', () => {
-        try {
-            const user = removeUser(socket.id)
-            console.log(`[+] ${user.username} has disconnected!`)
-        } catch (e) {
-            console.log(e)
-        }
-    })
+    // socket.on('disconnect', () => {
+    //     try {
+    //         const user = removeUser(socket.id)
+    //         console.log(`[+] ${user.username} has disconnected!`)
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // })
 
 })
 
