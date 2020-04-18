@@ -1,6 +1,8 @@
 const express = require("express")
 const http = require('http')
 const socketio = require('socket.io')
+const User = require('./models/user')
+const Chess = require('./models/chess')
 require("./db/mongoose")
 
 const { addUser, removeUser, getUser, findToPlay } = require('./utils/room')
@@ -19,7 +21,6 @@ const room = "live"
 io.on('connection', (socket) => {
     console.log('New WebSocket connection')
 
-    // Auth
     socket.on('join', (options, callback) => {
         console.log(options)
 
@@ -34,32 +35,50 @@ io.on('connection', (socket) => {
         callback()
     })
 
-    socket.on('play', (callback) => {
+    socket.on('play', async (callback) => {
         const { error, user } = getUser(socket.id)
 
         if (error) {
             return callback(error)
         } else {
-            const player1 = user.username
-            const player2 = findToPlay(user.id)
-            console.log(`${player1} wants to play with ${player2.username}`)
+            const {error, player2} = findToPlay(user.id)
+            
+            if (!error){
 
-            const playRoom = "room123"
-            io.to(player2.id).emit('invite', playRoom)
-            // io.to(player1.id).emit('invite', playRoom)
-            callback(playRoom)
+                try {
+
+                    const f1 = await User.findByName(user.username)
+                    const f2 = await User.findByName(player2.username)
+
+                    const chess = new Chess({
+                        player1: f1._id,
+                        player2: f2._id
+                    })
+
+                    await chess.save()
+
+                    const playRoom = chess._id
+                    
+                    io.to(player2.id).emit('invite', playRoom)
+
+                    return callback(playRoom)
+                } catch (e) {
+                    console.log(e)
+                    return callback(e)
+                }
+            }
         }
-        callback()
+        callback({error: 'No partner was found.'})
     })
 
-    // socket.on('disconnect', () => {
-    //     try {
-    //         const user = removeUser(socket.id)
-    //         console.log(`[+] ${user.username} has disconnected!`)
-    //     } catch (e) {
-    //         console.log(e)
-    //     }
-    // })
+    socket.on('disconnect', () => {
+        try {
+            const user = removeUser(socket.id)
+            console.log(`[+] ${user.username} has disconnected!`)
+        } catch (e) {
+            console.log(e)
+        }
+    })
 
 })
 

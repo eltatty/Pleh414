@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true, 
+        unique: true
     }, 
     email: {
         type: String,
@@ -84,28 +85,11 @@ const userSchema = new mongoose.Schema({
 userSchema.methods.generateAuthToken = async function() {
     const user = this
 
-    // const EncryptedMessage = {
-    //     AuthId: 'AuthService',
-    //     ServId: 'WebService',
-    //     UserId: user._id,
-    //     ValidTil: user.phone,
-    //     Usermeta: {
-    //         name: user.name,
-    //         nick: user.nickname,
-    //         email: user.email
-    //     }
-    // }
-    //const EncrMess = JSON.stringify(EncryptedMessage)
-
     const token = jwt.sign({ _id: user._id.toString() }, 'messithegoat')
 
     user.tokens = user.tokens.concat({token})
     await user.save()
     
-    // const TheToken = {
-    //     issuer: "AuthService",
-    //     crypted: token
-    // }
     return token
 }
 

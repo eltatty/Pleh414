@@ -64,7 +64,9 @@ const findToPlay = (id) => {
 
     const copy = users.filter((user) => user.id !== id)
 
-    return copy[Math.floor(Math.random() * copy.length)]
+    player2 = copy[Math.floor(Math.random() * copy.length)]
+
+    return { player2 }
     
 }
 
