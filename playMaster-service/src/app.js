@@ -3,6 +3,7 @@ const http = require('http')
 const socketio = require('socket.io')
 const Chess = require('./models/chess')
 const Tic = require('./models/tic')
+const trade = require('./utils/game')
 
 require("./db/mongoose")
 
@@ -13,7 +14,6 @@ const port = process.env.PORT || 3007
 const server = http.createServer(app)
 const io = socketio(server)
 
-// const room = "playRoom"
 
 io.on('connection', (socket) => {
     console.log('New websocket connection!')
@@ -29,52 +29,27 @@ io.on('connection', (socket) => {
 
     socket.on('move', async (data, callback) => {
         try {
-
-            if(data.gameType === "chess"){
+            if (data.gameType === "chess"){
                 const game = await Chess.findById(data.room)
-                
-                game.grid = data.move
 
-                await game.save()
-            } else if(data.gameType === "tic"){
+                await trade(data, game)
+
+            } else if (data.gameType === "tic"){
                 const game = await Tic.findById(data.room)
 
-                game.grid = data.move
+                await trade(data, game)
 
-                await game.save()
             } else {
-                return callback({ error: "No game type was specified!" })
+                return callback( {error: "No gameType was specified!"})
             }
 
-            socket.broadcast.to(data.room).emit('message', data.move)
+
+            // socket.broadcast.to(data.room).emit('message', data.move)
 
         } catch (e) {
             return callback(e)
         }
     })
-
-    // socket.on('move', async () => {
-    //     const gameId = "5e994966deebd21799e62286"
-    //     try {
-    //         const game = await Game.findById(gameId)
-    //         const move = new Move({
-    //             player: 'ED',
-    //             old_position: 'back',
-    //             new_position: 'front'
-    //         })
-    //         await move.save()
-    //         game.moves = game.moves.concat(move)
-    //         await game.save()
-
-    //         socket.broadcast.to(room).emit('message', move)
-    //     } catch (e) {
-    //         console.log(e)
-    //     }
-        
-    // })
-
-    
-
 })
 
 

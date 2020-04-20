@@ -61,11 +61,12 @@ document.querySelector('#move').addEventListener('click', () => {
     console.log('Try to move')
     // const move = document.getElementById('joker').value
     // move = ["BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO"]
-    const move = ["X", "X", "-", "-", "O", "X", "O", "-", "O"]
+    const move = ["!", "!", "!", "-", "O", "X", "O", "-", "O"]
     data = {
         move: move,
         room: "5e9b384938c2583de5b02ea5", 
-        gameType: "tic"
+        gameType: "tic", 
+        winner: "user2"
     }
     socket.emit('move', data, (message) => {
         console.log(message)
