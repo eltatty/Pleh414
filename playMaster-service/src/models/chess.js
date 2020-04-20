@@ -12,23 +12,17 @@ const chessSchema = new mongoose.Schema({
         ref: 'User' 
     }, 
     grid: [{
-        cell: {
-            type: String,
-            maxlength:2, 
-            default: '-'
-        }
+        type: String
     }],
     moves: {
         type: Number
     }, 
     winner: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'User' 
     }, 
     loser: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'User' 
     }
 },  {

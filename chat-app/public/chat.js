@@ -2,7 +2,7 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3006", {
+const socket = io.connect("http://localhost:3007", {
     reconnection:true
 })
 
@@ -23,21 +23,22 @@ document.querySelector('#join').addEventListener('click', () => {
     console.log('Try to join')
     const username = document.getElementById('joker').value
     // console.log(username)
-    // data = {
-    //     username: username, 
-    //     room: "5e9aae289d6e1216e6791f33"
-    // }
-    // socket.emit('join', data, (error) => {
-    //     if (error) {
-    //         alert(error)
-    //     }
-    // })
-
-    socket.emit('join', {username}, (error) => {
+    data = {
+        username: username, 
+        room: "5e9b384938c2583de5b02ea5",
+        gameType: "chess"
+    }
+    socket.emit('join', data, (error) => {
         if (error) {
             alert(error)
         }
     })
+
+    // socket.emit('join', {username}, (error) => {
+    //     if (error) {
+    //         alert(error)
+    //     }
+    // })
 })
 
 document.querySelector('#play').addEventListener('click', () => {
@@ -58,10 +59,13 @@ document.querySelector('#create').addEventListener('click', () => {
 
 document.querySelector('#move').addEventListener('click', () => {
     console.log('Try to move')
-    const move = document.getElementById('joker').value
+    // const move = document.getElementById('joker').value
+    // move = ["BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO", "BQ", "BK", "WO", "BP", "WT", "WH", "WH", "BO"]
+    const move = ["X", "X", "-", "-", "O", "X", "O", "-", "O"]
     data = {
         move: move,
-        room: "5e9aae289d6e1216e6791f33"
+        room: "5e9b384938c2583de5b02ea5", 
+        gameType: "tic"
     }
     socket.emit('move', data, (message) => {
         console.log(message)

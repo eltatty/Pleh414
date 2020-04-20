@@ -12,11 +12,7 @@ const chessSchema = new mongoose.Schema({
         ref: 'User' 
     }, 
     grid: [{
-        cell: {
-            type: String,
-            maxlength:2, 
-            default: '-'
-        }
+        type: String
     }],
     moves: {
         type: Number
