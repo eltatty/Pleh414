@@ -44,7 +44,7 @@ io.on('connection', (socket) => {
             }
 
 
-            // socket.broadcast.to(data.room).emit('message', data.move)
+            socket.broadcast.to(data.room).emit('message', data.move)
 
         } catch (e) {
             return callback(e)

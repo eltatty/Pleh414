@@ -12,18 +12,17 @@ const trade = async (data, game) => {
             if (user._id.equals(game.player1)){
                 game.winner = game.player1
                 game.loser = game.player2
-                game.grid = data.move
 
-                await game.save()
 
             } else {
                 game.winner = game.player2
                 game.loser = game.player1
-                game.grid = data.move
-
-                await game.save()
             }
         }
+
+        game.grid = data.move
+
+        await game.save()
 
     } catch (e) {
         console.log(e)
