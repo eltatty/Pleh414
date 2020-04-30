@@ -20,7 +20,9 @@ socket.on('invite', (message) => {
 })
 
 socket.on('tour-inv', (message) => {
-    console.log("Tournament invitation: " + message)
+    console.log("Tournament invitation: ")
+    console.log(message.playRoom)
+    console.log(message.tournament)
 })
 
 document.querySelector('#join').addEventListener('click', () => {

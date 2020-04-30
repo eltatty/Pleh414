@@ -1,4 +1,5 @@
 const users = []
+const tournaments = []
 
 
 const addUser = ({ id, username }) => {
@@ -89,13 +90,66 @@ const findParticipants = (id, num) => {
     return participants
 }
 
+const createTournament = (participants, tournamentID) => {
+
+    const tournament = {
+        participants: participants,
+        tournamentID: tournamentID,
+        phase: 1
+    }
+
+    tournaments.push(tournament)
+    console.log(tournament)
+}
+
+const nextRound = (user, tournamentID) => {
+    const index = tournaments.findIndex((tournament) => tournament.tournamentID === tournamentID )
+    if (index === -1){
+        return {
+            error: "Can`t find tournament"
+        }
+    }
+
+    if(Math.sqrt(tournaments[index].participants.length) === tournaments[index].phase) {
+        console.log("Winner")
+        return {
+            winner: user
+        }
+    }
+
+    const current = "phase" + tournaments[index].phase
+
+    if (typeof tournaments[index][current] === "undefined"){
+        const qualified = []
+        qualified.push(user)
+        tournaments[index][current] = qualified
+    } else {
+        tournaments[index][current].push(user)
+    }
+
+
+    if (tournaments[index].phase === 1){
+        if(tournaments[index][current].length === tournaments[index].participants.length / 2){
+            tournaments[index].phase += 1
+        }
+    } else {
+        const tmp = tournaments[index].phase - 1
+        const prevPhase = "phase" + tmp
+        if (tournaments[index][prevPhase].length === tournaments[index][current].length / 2){
+            tournaments[index].phase += 1
+        }
+    }
+}
+
 module.exports = {
     addUser,
     removeUser,
     getUser, 
     findToPlay,
     getRoom,
-    findParticipants
+    findParticipants,
+    createTournament,
+    nextRound
 }
 
 // addUser({
@@ -118,11 +172,16 @@ module.exports = {
 //     username: "user4"
 // })
 
-// // addUser({
-// //     id: 5,
-// //     username: "user5"
-// // })
+// addUser({
+//     id: 5,
+//     username: "user5"
+// })
 
-// // console.log(users)
 
-// findParticipants(1,4)
+// createTournament(findParticipants(1,4), "firstTournament")
+// createTournament(findParticipants(2,4), "secondTournament")
+// nextRound(users[0], "secondTournament")
+// nextRound(users[1], "secondTournament")
+// console.log(nextRound(users[1], "secondTournament"))
+// console.log("\n\n\n")
+// console.log(tournaments[1])

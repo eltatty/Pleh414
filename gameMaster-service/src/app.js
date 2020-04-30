@@ -4,9 +4,10 @@ const socketio = require('socket.io')
 const User = require('./models/user')
 const Chess = require('./models/chess')
 const Tic = require('./models/tic')
+const Tournament = require('./models/tournament')
 require("./db/mongoose")
 
-const { addUser, removeUser, getUser, findToPlay, getRoom, findParticipants } = require('./utils/room')
+const { addUser, removeUser, getUser, findToPlay, getRoom, findParticipants, createTournament, nextRound } = require('./utils/room')
 
 const app = express()
 
@@ -48,13 +49,18 @@ io.on('connection', (socket) => {
             }else if(Math.log2(options.participants) % 1 !== 0){
                 return callback({error: "Participants not pairing!"})
             } else {
-                // return callback({message: "All good"})
                 const participants = findParticipants(socket.id, options.participants)
+                const tournament = new Tournament({
+                    gameType: options.gameType,
+                })
 
                 for(i=0;i<participants.length;i+=2){
 
                     const f1 = await User.findByName(participants[i].username)
                     const f2 = await User.findByName(participants[i+1].username)
+
+                    tournament.participants.push(f1)
+                    tournament.participants.push(f2)
 
                     if (options.gameType === "chess"){
                         const chess = new Chess({
@@ -63,11 +69,16 @@ io.on('connection', (socket) => {
                         })
     
                         await chess.save()
-    
-                        const playRoom = chess._id
+                        tournament.games.push(chess)
 
-                        io.to(participants[i].id).emit('tour-inv', playRoom)
-                        io.to(participants[i+1].id).emit('tour-inv', playRoom)
+                        const flowers = {
+                            playRoom: tic._id,
+                            tournament: tournament._id
+                        }
+
+
+                        io.to(participants[i].id).emit('tour-inv', flowers)
+                        io.to(participants[i+1].id).emit('tour-inv', flowers)
 
                     } else {
                         const tic = new Tic({
@@ -76,13 +87,19 @@ io.on('connection', (socket) => {
                         })
     
                         await tic.save()
+                        tournament.games.push(tic)
     
-                        const playRoom = tic._id
+                        const flowers = {
+                            playRoom: tic._id,
+                            tournament: tournament._id
+                        }
 
-                        io.to(participants[i].id).emit('tour-inv', playRoom)
-                        io.to(participants[i+1].id).emit('tour-inv', playRoom)
+                        io.to(participants[i].id).emit('tour-inv', flowers)
+                        io.to(participants[i+1].id).emit('tour-inv', flowers)
                     }
                 }
+                await tournament.save()
+                createTournament(participants, tournament._id)
             }
         } catch (e) {
             console.log(e)
@@ -136,6 +153,8 @@ io.on('connection', (socket) => {
                     console.log(e)
                     return callback(e)
                 }
+            } else {
+                callback({error: "No partner was found."})
             }
         }
         callback({error: 'No partner was found.'})
