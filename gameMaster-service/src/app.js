@@ -160,6 +160,21 @@ io.on('connection', (socket) => {
         callback({error: 'No partner was found.'})
     })
 
+    socket.on('nextRound', (data) => {
+        console.log(data)
+        const {winner, error, nextPhase} = nextRound(data.name, data.tournament)
+        if (error) {
+            console.log(error)
+        } else if (winner) {
+            console.log(winner)
+        } else if (nextPhase) {
+            // Distribution of rooms for next phase
+            console.log(nextPhase)
+        } else {
+            console.log("Just an addition!")
+        }
+    })
+
     // socket.on('disconnect', () => {
     //     try {
     //         const user = removeUser(socket.id)

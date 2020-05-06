@@ -84,11 +84,35 @@ document.querySelector('#tour').addEventListener('click', () => {
 
     const data = {
         username: "user1",
-        participants: 4,
+        participants: 2,
         gameType: "tic"
     }
 
     socket.emit('tournament', data, (message) => {
+        console.log(message)
+    })
+})
+
+document.querySelector('#test').addEventListener('click', () => {
+    console.log('Try to test')
+
+    socket.emit('tour-play', (message) => {
+        console.log(message)
+    })
+})
+
+document.querySelector('#tour-move').addEventListener('click', () => {
+    console.log('Tour-Move')
+    const move = ["@", "@", "@", "-", "O", "X", "O", "-", "O"]
+    data = {
+        move: move,
+        room: "5eaee5ba09cfff36a553630e", 
+        tournament: "5eaee5ba09cfff36a5536309",
+        gameType: "tic",
+        winner: "user1"
+    }
+
+    socket.emit('tour-move', data, (message) => {
         console.log(message)
     })
 })
