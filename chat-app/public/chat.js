@@ -71,8 +71,7 @@ document.querySelector('#move').addEventListener('click', () => {
     data = {
         move: move,
         room: "5e9b384938c2583de5b02ea5", 
-        gameType: "tic", 
-        winner: "user2"
+        gameType: "tic"
     }
     socket.emit('move', data, (message) => {
         console.log(message)

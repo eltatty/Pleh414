@@ -49,7 +49,6 @@ io.on('connection', (socket) => {
                 return callback( {error: "No gameType was specified!"})
             }
 
-
             socket.broadcast.to(data.room).emit('message', data.move)
 
         } catch (e) {

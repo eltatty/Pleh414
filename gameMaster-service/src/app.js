@@ -131,10 +131,18 @@ io.on('connection', (socket) => {
                         })
     
                         await chess.save()
-    
-                        const playRoom = chess._id
 
-                        io.to(player2.id).emit('invite', playRoom)
+                        const playRoom = chess._id
+    
+                        const flowers = {
+                            playRoom: chess._id,
+                            gameType: data
+                        }
+                        
+                        // Add gameType
+
+
+                        io.to(player2.id).emit('invite', flowers)
                         return callback(playRoom)
                     } else {
                         const tic = new Tic({
@@ -144,9 +152,16 @@ io.on('connection', (socket) => {
     
                         await tic.save()
     
-                        const playRoom = tic._id
+                        const playRoom = tic._id    
 
-                        io.to(player2.id).emit('invite', playRoom)
+                        const flowers = {
+                            playRoom: tic._id,
+                            gameType: data
+                        }
+                        
+
+                        // Add gameType
+                        io.to(player2.id).emit('invite', flowers)
                         return callback(playRoom)
                     }
                 } catch (e) {
