@@ -19,6 +19,7 @@ const sockServer = http.createServer(app)
 const io = socketio(sockServer)
 
 const room = "live"
+const shape = ["X", "O"]
 
 io.on('connection', (socket) => {
     console.log('New WebSocket connection')
@@ -133,17 +134,24 @@ io.on('connection', (socket) => {
                         await chess.save()
 
                         const playRoom = chess._id
-    
+
                         const flowers = {
                             playRoom: chess._id,
-                            gameType: data
+                            gameType: data,
+                            shape: shape[0]
                         }
                         
                         // Add gameType
 
+                        const buquets = {
+                            playRoom: chess._id,
+                            gameType: data,
+                            shape: shape[1]
+                        }
+
 
                         io.to(player2.id).emit('invite', flowers)
-                        return callback(playRoom)
+                        return callback(buquets)
                     } else {
                         const tic = new Tic({
                             player1: f1._id,
@@ -152,17 +160,25 @@ io.on('connection', (socket) => {
     
                         await tic.save()
     
-                        const playRoom = tic._id    
+                        const playRoom = tic._id
 
                         const flowers = {
                             playRoom: tic._id,
-                            gameType: data
+                            gameType: data,
+                            shape: shape[0]
                         }
                         
-
                         // Add gameType
+
+                        const buquets = {
+                            playRoom: tic._id,
+                            gameType: data,
+                            shape: shape[1]
+                        }
+
+
                         io.to(player2.id).emit('invite', flowers)
-                        return callback(playRoom)
+                        return callback(buquets)
                     }
                 } catch (e) {
                     console.log(e)

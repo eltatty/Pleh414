@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
         console.log(data)
         
         socket.join(data.room)
-        socket.broadcast.to(data.room).emit('message','New user in room ' + data.username)
+        socket.broadcast.to(data.room).emit('first_move')
     })
     
 
@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
                 return callback( {error: "No gameType was specified!"})
             }
 
-            socket.broadcast.to(data.room).emit('message', data.move)
+            socket.broadcast.to(data.room).emit('move_back', data.move)
 
         } catch (e) {
             return callback(e)
