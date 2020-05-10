@@ -74,12 +74,13 @@ io.on('connection', (socket) => {
 
                         const flowers = {
                             playRoom: tic._id,
-                            tournament: tournament._id
+                            tournament: tournament._id,
+                            gameType: options.gameType
                         }
 
 
-                        io.to(participants[i].id).emit('tour-inv', flowers)
-                        io.to(participants[i+1].id).emit('tour-inv', flowers)
+                        io.to(participants[i].id).emit('tour-inv', flowers, shape[0])
+                        io.to(participants[i+1].id).emit('tour-inv', flowers, shape[1])
 
                     } else {
                         const tic = new Tic({
@@ -92,11 +93,12 @@ io.on('connection', (socket) => {
     
                         const flowers = {
                             playRoom: tic._id,
-                            tournament: tournament._id
+                            tournament: tournament._id,
+                            gameType: options.gameType
                         }
 
-                        io.to(participants[i].id).emit('tour-inv', flowers)
-                        io.to(participants[i+1].id).emit('tour-inv', flowers)
+                        io.to(participants[i].id).emit('tour-inv', flowers, shape[0])
+                        io.to(participants[i+1].id).emit('tour-inv', flowers, shape[1])
                     }
                 }
                 await tournament.save()
@@ -133,15 +135,11 @@ io.on('connection', (socket) => {
     
                         await chess.save()
 
-                        const playRoom = chess._id
-
                         const flowers = {
                             playRoom: chess._id,
                             gameType: data,
                             shape: shape[0]
                         }
-                        
-                        // Add gameType
 
                         const buquets = {
                             playRoom: chess._id,
@@ -158,8 +156,6 @@ io.on('connection', (socket) => {
                         })
     
                         await tic.save()
-    
-                        const playRoom = tic._id
 
                         const flowers = {
                             playRoom: tic._id,

@@ -103,11 +103,10 @@ const createTournament = (participants, tournamentID) => {
 
     const tournament = {
         participants: participants,
-        tournamentID: tournamentID,
+        tournamentID: JSON.stringify(tournamentID).replace(/['"]+/g, ''),
         phase: 1
     }
     tournaments.push(tournament)
-    // console.log(tournament)
 }
 
 const getTournaments = () => {
@@ -121,10 +120,6 @@ const getUsers = () => {
 const nextRound = (name, tourID) => {
     const ind = users.findIndex((user) => user.username === name)
     const user = users[ind]
-
-    console.log("TourID: " + tourID)
-    console.log("Tour[0].tourID: " + tournaments[0].tournamentID)
-    console.log(tournaments[0].tournamentID === tourID)
 
     const index = tournaments.findIndex((tournament) => tournament.tournamentID === tourID )
     if (index === -1){

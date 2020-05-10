@@ -49,7 +49,22 @@ io.on('connection', (socket) => {
                 return callback( {error: "No gameType was specified!"})
             }
 
-            socket.broadcast.to(data.room).emit('move_back', data.move)
+            if (data.winner !== ''){
+                // const user = await User.findByName(data.winner)
+
+                if(data.tournament !== ''){
+                    const flowers = {
+                        user: data.winner,
+                        tournamentID: data.tournament 
+                    }
+    
+                    socket2.emit('nextRound', flowers)
+                }
+                socket.broadcast.to(data.room).emit('move_back', 'END')
+            }else {
+                socket.broadcast.to(data.room).emit('move_back', data.move)
+            }
+            
 
         } catch (e) {
             return callback(e)
@@ -85,7 +100,7 @@ io.on('connection', (socket) => {
 
                 socket2.emit('nextRound', flowers)
             }
-            socket.broadcast.to(data.room).emit('message', data.move)
+            socket.broadcast.to(data.room).emit('move_back', data.move)
 
         } catch (e) {
             return callback(e)

@@ -2,7 +2,7 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3007", {
+const socket = io.connect("http://localhost:3006", {
     reconnection:true
 })
 
@@ -26,10 +26,11 @@ socket.on('invite', (message) => {
     console.log(message)
 })
 
-socket.on('tour-inv', (message) => {
+socket.on('tour-inv', (flowers, shape) => {
     console.log("Tournament invitation: ")
-    console.log(message.playRoom)
-    console.log(message.tournament)
+    console.log(flowers.playRoom)
+    console.log(flowers.tournament)
+    console.log(shape)
 })
 
 document.querySelector('#join').addEventListener('click', () => {
@@ -78,7 +79,8 @@ document.querySelector('#move').addEventListener('click', () => {
     data = {
         move: move,
         room: "5e9b384938c2583de5b02ea5", 
-        gameType: "tic"
+        gameType: "tic",
+        winner:'lklk'
     }
     socket.emit('move', data, (message) => {
         console.log(message)
@@ -112,8 +114,8 @@ document.querySelector('#tour-move').addEventListener('click', () => {
     const move = ["@", "@", "@", "-", "O", "X", "O", "-", "O"]
     data = {
         move: move,
-        room: "5eb7b9b74c89b62856d0f071", 
-        tournament: "5eb7b9b74c89b62856d0f06c",
+        room: "5eb829ceaa43e1779f143e6c", 
+        tournament: '5eb829ceaa43e1779f143e67',
         gameType: "tic",
         winner: "user1"
     }
