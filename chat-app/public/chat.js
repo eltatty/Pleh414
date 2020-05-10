@@ -2,7 +2,7 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3006", {
+const socket = io.connect("http://localhost:3007", {
     reconnection:true
 })
 
@@ -11,6 +11,13 @@ socket.on('connect', function () {
 })
 
 socket.on('message', (message) => {
+    console.log(message)
+})
+socket.on('move_back', (message) => {
+    console.log(message)
+})
+
+socket.on('second_move', (message) => {
     console.log(message)
 })
 
@@ -105,8 +112,8 @@ document.querySelector('#tour-move').addEventListener('click', () => {
     const move = ["@", "@", "@", "-", "O", "X", "O", "-", "O"]
     data = {
         move: move,
-        room: "5eaee5ba09cfff36a553630e", 
-        tournament: "5eaee5ba09cfff36a5536309",
+        room: "5eb7b9b74c89b62856d0f071", 
+        tournament: "5eb7b9b74c89b62856d0f06c",
         gameType: "tic",
         winner: "user1"
     }

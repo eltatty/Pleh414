@@ -5,7 +5,7 @@ const User = require('../models/user')
 const trade = async (data, game) => {
 
     try {
-        if(data.winner){
+        if(data.winner !== ''){
 
             const user = await User.findByName(data.winner) 
 

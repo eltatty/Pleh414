@@ -149,7 +149,6 @@ io.on('connection', (socket) => {
                             shape: shape[1]
                         }
 
-
                         io.to(player2.id).emit('invite', flowers)
                         return callback(buquets)
                     } else {
@@ -193,7 +192,7 @@ io.on('connection', (socket) => {
 
     socket.on('nextRound', (data) => {
         console.log(data)
-        const {winner, error, nextPhase} = nextRound(data.name, data.tournament)
+        const {winner, error, nextPhase} = nextRound(data.name, data.tournamentID)
         if (error) {
             console.log(error)
         } else if (winner) {

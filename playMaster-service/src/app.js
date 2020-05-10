@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
         console.log(data)
         
         socket.join(data.room)
-        socket.broadcast.to(data.room).emit('first_move')
+        socket.broadcast.to(data.room).emit('second_move')
     })
     
 
@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
 
                 const flowers = {
                     user: user.name,
-                    tournament: data.tournament 
+                    tournamentID: data.tournament 
                 }
 
                 socket2.emit('nextRound', flowers)
