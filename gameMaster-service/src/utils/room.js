@@ -51,6 +51,22 @@ const getUser = (id) => {
     }
 }
 
+const getID = (name) => {
+    if (!name){
+        return {
+            error: 'No valid data was provided!'
+        }
+    }
+    const index = users.findIndex((user) => user.username === name)
+    if (index !== -1) {
+        return {user: users[index]}
+    } else {
+        return {
+            error: 'User not found!'
+        }
+    }
+}
+
 const findToPlay = (id) => {
     if (!id) {
         return {
@@ -99,12 +115,16 @@ const findParticipants = (id, num) => {
     return participants
 }
 
-const createTournament = (participants, tournamentID) => {
+const createTournament = (participants, tournamentID, gameType) => {
+    // Need to change because of refreshed
+    const names = []
+    participants.forEach(participant => names.push(participant.username))
 
     const tournament = {
-        participants: participants,
+        participants: names,
         tournamentID: JSON.stringify(tournamentID).replace(/['"]+/g, ''),
-        phase: 1
+        phase: 1,
+        gameType: gameType
     }
     tournaments.push(tournament)
 }
@@ -119,7 +139,7 @@ const getUsers = () => {
 
 const nextRound = (name, tourID) => {
     const ind = users.findIndex((user) => user.username === name)
-    const user = users[ind]
+    const user = users[ind].username
 
     const index = tournaments.findIndex((tournament) => tournament.tournamentID === tourID )
     if (index === -1){
@@ -129,6 +149,7 @@ const nextRound = (name, tourID) => {
     }
 
     if(tournaments[index].participants.length === Math.pow(2, tournaments[index].phase)) {
+        console.log(tournaments[index])
         return {
             winner: user
         }
@@ -149,7 +170,9 @@ const nextRound = (name, tourID) => {
         if(tournaments[index][current].length === tournaments[index].participants.length / 2){
             tournaments[index].phase += 1
             return {
-               nextPhase: tournaments[index][current]
+               nextPhase: tournaments[index][current],
+               gameType: tournaments[index].gameType,
+               tourID: tournaments[index].tournamentID
             }
         }
     } else {
@@ -158,7 +181,9 @@ const nextRound = (name, tourID) => {
         if ( tournaments[index][current].length  === tournaments[index][prevPhase].length / 2){
             tournaments[index].phase += 1
             return {
-                nextPhase: tournaments[index][current]
+                nextPhase: tournaments[index][current],
+                gameType: tournaments[index].gameType,
+                tourID: tournaments[index].tournamentID
             }
         }
     }
@@ -174,7 +199,8 @@ module.exports = {
     createTournament,
     nextRound,
     getTournaments,
-    getUsers
+    getUsers,
+    getID
 }
 
 
@@ -218,16 +244,13 @@ module.exports = {
 //     username: "user8"
 // })
 
-// createTournament(findParticipants(1,8), "5eaee5ba09cfff36a553630e")
-// console.log(nextRound("user1", "5eaee5ba09cfff36a553630e"))
-// console.log(nextRound("user2", "5eaee5ba09cfff36a553630e"))
-// console.log(nextRound("user3", "5eaee5ba09cfff36a553630e"))
-// console.log(nextRound("user4", "5eaee5ba09cfff36a553630e"))
+// createTournament(findParticipants(1,8), "5eaee5ba09cfff36a553630e", "tic")
+// nextRound("user1", "5eaee5ba09cfff36a553630e")
+// nextRound("user2", "5eaee5ba09cfff36a553630e")
+// nextRound("user3", "5eaee5ba09cfff36a553630e")
+// nextRound("user4", "5eaee5ba09cfff36a553630e")
 // // ///
-// console.log(nextRound("user1", "5eaee5ba09cfff36a553630e"))
-// console.log(nextRound("user3", "5eaee5ba09cfff36a553630e"))
-// // ///
-// console.log(nextRound("user1", "5eaee5ba09cfff36a553630e"))
-// // console.log(tournaments[0])
-// // console.log("\n\n\n")
-// // console.log(tournaments[1])
+// nextRound("user1", "5eaee5ba09cfff36a553630e")
+// const {nextPhase, gameType} = nextRound("user3", "5eaee5ba09cfff36a553630e")
+// // // ///
+// nextRound("user1", "5eaee5ba09cfff36a553630e")

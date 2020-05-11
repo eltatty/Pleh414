@@ -7,7 +7,7 @@ const Tic = require('./models/tic')
 const Tournament = require('./models/tournament')
 require("./db/mongoose")
 
-const { addUser, removeUser, getUser, findToPlay, getRoom, findParticipants, createTournament, nextRound } = require('./utils/room')
+const { addUser, removeUser, getUser, getID, findToPlay, getRoom, findParticipants, createTournament, nextRound } = require('./utils/room')
 
 const app = express()
 
@@ -102,7 +102,7 @@ io.on('connection', (socket) => {
                     }
                 }
                 await tournament.save()
-                createTournament(participants, tournament._id)
+                createTournament(participants, tournament._id, options.gameType)
             }
         } catch (e) {
             console.log(e)
@@ -186,18 +186,71 @@ io.on('connection', (socket) => {
         callback({error: 'No partner was found.'})
     })
 
-    socket.on('nextRound', (data) => {
-        console.log(data)
-        const {winner, error, nextPhase} = nextRound(data.name, data.tournamentID)
-        if (error) {
-            console.log(error)
-        } else if (winner) {
-            console.log(winner)
-        } else if (nextPhase) {
-            // Distribution of rooms for next phase
-            console.log(nextPhase)
-        } else {
-            console.log("Just an addition!")
+    socket.on('nextRound', async (data) => {
+        try {
+            console.log(data)
+            const {winner, error, nextPhase, gameType, tourID} = nextRound(data.name, data.tournamentID)
+            if (error) {
+                console.log(error)
+            } else if (winner) {
+                console.log("Winner: " + winner)
+                io.to(getID(winner).emit('winner', "Well done!"))
+            } else if (nextPhase) {
+                // Distribution of rooms for next phase
+                console.log("NextPhase: " + nextPhase)
+                
+                const tournament = await Tournament.findById(tourID)
+
+                for(i=0;i<nextPhase.length;i+=2){
+                    const f1 = await User.findByName(nextPhase[i])
+                    const f2 = await User.findByName(nextPhase[i+1])
+
+                    if (gameType === "chess"){
+                        const chess = new Chess({
+                            player1: f1._id,
+                            player2: f2._id
+                        })
+
+                        await chess.save()
+                        tournament.games.push(chess)
+
+                        const flowers = {
+                            playRoom: chess._id,
+                            tournament: tournament._id,
+                            gameType: gameType
+                        }
+
+                        io.to(getID(nextPhase[i])).emit('tour-inv', flowers, shape[0])
+                        io.to(getID(nextPhase[i+1])).emit('tour-inv', flowers, shape[1])
+
+
+                    } else {
+                        const tic = new Tic({
+                            player1: f1._id,
+                            player2: f2._id
+                        })
+    
+                        await tic.save()
+                        tournament.games.push(tic)
+
+                        const flowers = {
+                            playRoom: tic._id,
+                            tournament: tournament._id,
+                            gameType: gameType
+                        }
+
+                        io.to(getID(nextPhase[i])).emit('tour-inv', flowers, shape[0])
+                        io.to(getID(nextPhase[i+1])).emit('tour-inv', flowers, shape[1])
+                    }
+
+                }
+    
+    
+            } else {
+                console.log("Just an addition!")
+            }
+        } catch (e) {
+            console.log(e)
         }
     })
 
