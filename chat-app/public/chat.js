@@ -2,7 +2,7 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3006", {
+const socket = io.connect("http://localhost:3007", {
     reconnection:true
 })
 
@@ -37,22 +37,22 @@ document.querySelector('#join').addEventListener('click', () => {
     console.log('Try to join')
     const username = document.getElementById('joker').value
     console.log(username)
-    // data = {
-    //     username: username, 
-    //     room: "5e9b384938c2583de5b02ea5",
-    //     gameType: "chess"
-    // }
-    // socket.emit('join', data, (error) => {
-    //     if (error) {
-    //         alert(error)
-    //     }
-    // })
-
-    socket.emit('join', {username}, (error) => {
+    data = {
+        username: username, 
+        room: "5ebd85a142e97c424cc9898e",
+        gameType: "tic"
+    }
+    socket.emit('join', data, (error) => {
         if (error) {
             alert(error)
         }
     })
+
+    // socket.emit('join', {username}, (error) => {
+    //     if (error) {
+    //         alert(error)
+    //     }
+    // })
 })
 
 document.querySelector('#play').addEventListener('click', () => {
@@ -78,9 +78,9 @@ document.querySelector('#move').addEventListener('click', () => {
     const move = ["@", "@", "@", "-", "O", "X", "O", "-", "O"]
     data = {
         move: move,
-        room: "5e9b384938c2583de5b02ea5", 
+        room: "5ebd85a142e97c424cc9898e", 
         gameType: "tic",
-        winner:'lklk'
+        winner: "user2"
     }
     socket.emit('move', data, (message) => {
         console.log(message)
@@ -120,7 +120,7 @@ document.querySelector('#tour-move').addEventListener('click', () => {
         winner: "user1"
     }
 
-    socket.emit('tour-move', data, (message) => {
+    socket.emit('move', data, (message) => {
         console.log(message)
     })
 })

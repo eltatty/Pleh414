@@ -189,12 +189,12 @@ io.on('connection', (socket) => {
     socket.on('nextRound', async (data) => {
         try {
             console.log(data)
-            const {winner, error, nextPhase, gameType, tourID} = nextRound(data.name, data.tournamentID)
+            const {winner, error, nextPhase, gameType, tourID} =  await nextRound(data.name, data.tournamentID)
             if (error) {
                 console.log(error)
             } else if (winner) {
                 console.log("Winner: " + winner)
-                io.to(getID(winner).emit('winner', "Well done!"))
+                io.to(getID(winner)).emit('winner', "Well done!")
             } else if (nextPhase) {
                 // Distribution of rooms for next phase
                 console.log("NextPhase: " + nextPhase)
@@ -213,6 +213,7 @@ io.on('connection', (socket) => {
 
                         await chess.save()
                         tournament.games.push(chess)
+                        await tournament.save()
 
                         const flowers = {
                             playRoom: chess._id,
@@ -232,6 +233,7 @@ io.on('connection', (socket) => {
     
                         await tic.save()
                         tournament.games.push(tic)
+                        await tournament.save()
 
                         const flowers = {
                             playRoom: tic._id,
@@ -254,14 +256,14 @@ io.on('connection', (socket) => {
         }
     })
 
-    // socket.on('disconnect', () => {
-    //     try {
-    //         const user = removeUser(socket.id)
-    //         console.log(`[+] ${user.username} has disconnected!`)
-    //     } catch (e) {
-    //         console.log(e)
-    //     }
-    // })
+    socket.on('disconnect', () => {
+        try {
+            const user = removeUser(socket.id)
+            console.log(`[+] ${user.username} has disconnected!`)
+        } catch (e) {
+            // console.log(e)
+        }
+    })
 
 })
 

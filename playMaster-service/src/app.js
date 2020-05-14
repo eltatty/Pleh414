@@ -35,15 +35,21 @@ io.on('connection', (socket) => {
 
     socket.on('move', async (data, callback) => {
         try {
+            // Wins/losses
+            const tour = 0
+            if (data.tournament !== ''){
+                const tour = 1
+            }
+
             if (data.gameType === "chess"){
                 const game = await Chess.findById(data.room)
 
-                await trade(data, game)
+                await trade(data, game, tour)
 
-            } else if (data.gameType === "tic"){
+            } else if (data.gameType === "tic"){                
                 const game = await Tic.findById(data.room)
 
-                await trade(data, game)
+                await trade(data, game, tour)
 
             } else {
                 return callback( {error: "No gameType was specified!"})
@@ -54,7 +60,7 @@ io.on('connection', (socket) => {
 
                 if(data.tournament !== ''){
                     const flowers = {
-                        user: data.winner,
+                        name: data.winner,
                         tournamentID: data.tournament 
                     }
     
@@ -69,44 +75,6 @@ io.on('connection', (socket) => {
         } catch (e) {
             return callback(e)
         }
-    })
-
-    socket.on('tour-move', async (data, callback) => {
-
-        console.log(data)
-
-        try {
-            if (data.gameType === "chess"){
-                const game = await Chess.findById(data.room)
-
-                await trade(data, game)
-
-            } else if (data.gameType === "tic"){
-                const game = await Tic.findById(data.room)
-
-                await trade(data, game)
-
-            } else {
-                return callback( {error: "No gameType was specified!"})
-            }
-
-            if( typeof data.winner !== "undefined"){
-                const user = await User.findByName(data.winner)
-
-                const flowers = {
-                    user: user.name,
-                    tournamentID: data.tournament 
-                }
-
-                socket2.emit('nextRound', flowers)
-            }
-            socket.broadcast.to(data.room).emit('move_back', data.move)
-
-        } catch (e) {
-            return callback(e)
-        }
-
-
     })
 })
 

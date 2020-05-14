@@ -1,3 +1,5 @@
+const User = require("../models/user")
+
 const users = []
 const tournaments = []
 
@@ -59,7 +61,7 @@ const getID = (name) => {
     }
     const index = users.findIndex((user) => user.username === name)
     if (index !== -1) {
-        return {user: users[index]}
+        return users[index].id
     } else {
         return {
             error: 'User not found!'
@@ -127,6 +129,7 @@ const createTournament = (participants, tournamentID, gameType) => {
         gameType: gameType
     }
     tournaments.push(tournament)
+    // console.log(tournament)
 }
 
 const getTournaments = () => {
@@ -137,8 +140,16 @@ const getUsers = () => {
     return { users }
 }
 
-const nextRound = (name, tourID) => {
+const nextRound = async (name, tourID) => {
+    
     const ind = users.findIndex((user) => user.username === name)
+
+    if(ind === -1) {
+        return {
+            error: "Can`t find user"
+        }
+    }
+
     const user = users[ind].username
 
     const index = tournaments.findIndex((tournament) => tournament.tournamentID === tourID )
@@ -149,7 +160,30 @@ const nextRound = (name, tourID) => {
     }
 
     if(tournaments[index].participants.length === Math.pow(2, tournaments[index].phase)) {
-        console.log(tournaments[index])
+
+        // Participations wins losses
+        try {
+
+            for (i=0;i<tournaments[index].participants.length;i++){
+                const joker = await User.findByName(tournaments[index].participants[i])
+
+                if (user === tournaments[index].participants[i]){
+                    joker.tournament_participations += 1
+                    joker.tournament_wins += 1
+                    await joker.save()
+                }
+
+
+                joker.tournament_participations += 1
+                joker.tournament_losses += 1
+                await joker.save()
+            }
+             
+
+        } catch (error) {
+            return {error}
+        }
+
         return {
             winner: user
         }
@@ -204,15 +238,16 @@ module.exports = {
 }
 
 
-// addUser({
-//     id: 1,
-//     username: "user1"
-// })
+addUser({
+    id: 1,
+    username: "user1"
+})
 
-// addUser({
-//     id: 2,
-//     username: "user2"
-// })
+
+addUser({
+    id: 2,
+    username: "user2"
+})
 
 // addUser({
 //     id: 3,
@@ -244,13 +279,15 @@ module.exports = {
 //     username: "user8"
 // })
 
-// createTournament(findParticipants(1,8), "5eaee5ba09cfff36a553630e", "tic")
-// nextRound("user1", "5eaee5ba09cfff36a553630e")
+createTournament(findParticipants(1,2), "5eaee5ba09cfff36a553630e", "tic")
+
+
+console.log(nextRound("user1", "5eaee5ba09cfff36a553630e"))
 // nextRound("user2", "5eaee5ba09cfff36a553630e")
 // nextRound("user3", "5eaee5ba09cfff36a553630e")
 // nextRound("user4", "5eaee5ba09cfff36a553630e")
 // // ///
 // nextRound("user1", "5eaee5ba09cfff36a553630e")
-// const {nextPhase, gameType} = nextRound("user3", "5eaee5ba09cfff36a553630e")
+// nextRound("user3", "5eaee5ba09cfff36a553630e")
 // // // ///
 // nextRound("user1", "5eaee5ba09cfff36a553630e")
