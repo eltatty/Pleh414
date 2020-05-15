@@ -1,4 +1,5 @@
 const User = require("../models/user")
+require("../db/mongoose")
 
 const users = []
 const tournaments = []
@@ -238,16 +239,16 @@ module.exports = {
 }
 
 
-addUser({
-    id: 1,
-    username: "user1"
-})
+// addUser({
+//     id: 1,
+//     username: "user1"
+// })
 
 
-addUser({
-    id: 2,
-    username: "user2"
-})
+// addUser({
+//     id: 2,
+//     username: "user2"
+// })
 
 // addUser({
 //     id: 3,
@@ -279,10 +280,10 @@ addUser({
 //     username: "user8"
 // })
 
-createTournament(findParticipants(1,2), "5eaee5ba09cfff36a553630e", "tic")
+// createTournament(findParticipants(1,2), "5eaee5ba09cfff36a553630e", "tic")
 
 
-console.log(nextRound("user1", "5eaee5ba09cfff36a553630e"))
+// console.log(nextRound("user1", "5eaee5ba09cfff36a553630e"))
 // nextRound("user2", "5eaee5ba09cfff36a553630e")
 // nextRound("user3", "5eaee5ba09cfff36a553630e")
 // nextRound("user4", "5eaee5ba09cfff36a553630e")
