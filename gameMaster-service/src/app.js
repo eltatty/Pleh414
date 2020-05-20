@@ -265,6 +265,10 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on('test', () => {
+        console.log("PlayMaster says hi in gameMaster!")
+    })
+
 })
 
 app.get('/', (req, res) => {

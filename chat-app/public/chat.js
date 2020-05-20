@@ -104,7 +104,7 @@ document.querySelector('#tour').addEventListener('click', () => {
 document.querySelector('#test').addEventListener('click', () => {
     console.log('Try to test')
 
-    socket.emit('tour-play', (message) => {
+    socket.emit('playTest', (message) => {
         console.log(message)
     })
 })

