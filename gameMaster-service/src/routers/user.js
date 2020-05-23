@@ -8,33 +8,36 @@ const { getTournaments, getUsers } = require('../utils/room')
 
 router.get('/users', auth, async (req, res) => {
     try {
-        const users = await User.find({})
+        const users = await User.find({}, {name:1, _id:0})
         res.send(users)
     } catch (e) {
         res.status(500).send(e)
     }
 })
 
-router.get('/liveTournaments', auth, async (req, res) => {
+router.get('/liveTournaments', auth, (req, res) => {
     try {
         if(req.user.role !== "admin"){
             res.status(500).send("You have no power here!")
         } else {
             res.status(200).send(getTournaments())
         }
+
+        res.status(200).send(getTournaments())
     } catch (e) {
         res.status(500).send(e)
     }
 })
 
 
-router.get('/liveUsers', auth, async (req, res) => {
+router.get('/liveUsers', auth, (req, res) => {
     try {
-        if(req.user.role !== "admin"){
-            res.status(500).send("You have no power here!")
-        } else {
-            res.status(200).send(getUsers())
-        }
+        // if(req.user.role !== "admin"){
+        //     res.status(500).send("You have no power here!")
+        // } else {
+        //     res.status(200).send(getUsers())
+        // }
+        res.status(200).send(getUsers())
     } catch (e) {
         res.status(500).send(e)
     }
