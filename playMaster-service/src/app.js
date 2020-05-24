@@ -5,7 +5,7 @@ const Chess = require('./models/chess')
 const Tic = require('./models/tic')
 const User = require('./models/user')
 const trade = require('./utils/game')
-// const zoo_con = require("./zoo/client")
+const zoo_con = require("./zoo/client")
 
 require("./db/mongoose")
 
@@ -89,4 +89,4 @@ server.listen(port, () => {
 })
 
 
-// zoo_con()
+zoo_con()

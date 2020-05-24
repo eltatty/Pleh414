@@ -6,21 +6,12 @@ const socket = io.connect("http://localhost:3006", {
     reconnection:true
 })
 
-const socket2 = io.connect("http://localhost:3007", {
-    reconnection:true
-})
-
 socket.on('connect', function () {
     console.log('connected to localhost')
 })
 
 socket.on('message', (message) => {
     console.log('3006 ==> ')
-    console.log(message)
-})
-
-socket2.on('message', (message) => {
-    console.log('3007 ==> ')
     console.log(message)
 })
 

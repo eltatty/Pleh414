@@ -19,6 +19,7 @@ const room = "live"
 const shape = ["X", "O"]
 
 let playmasters = [3007, 3008, 3009]
+let chosenOne = 0
 
 io.on('connection', (socket) => {
     console.log('New WebSocket connection')
@@ -59,6 +60,8 @@ io.on('connection', (socket) => {
                     const f1 = await User.findByName(participants[i].username)
                     const f2 = await User.findByName(participants[i+1].username)
 
+                    const playServer = findServer()
+
                     tournament.participants.push(f1)
                     tournament.participants.push(f2)
 
@@ -74,7 +77,8 @@ io.on('connection', (socket) => {
                         const flowers = {
                             playRoom: tic._id,
                             tournament: tournament._id,
-                            gameType: options.gameType
+                            gameType: options.gameType,
+                            playServer: playServer
                         }
 
 
@@ -93,7 +97,8 @@ io.on('connection', (socket) => {
                         const flowers = {
                             playRoom: tic._id,
                             tournament: tournament._id,
-                            gameType: options.gameType
+                            gameType: options.gameType,
+                            playServer: playServer
                         }
 
                         io.to(participants[i].id).emit('tour-inv', flowers, shape[0])
@@ -125,6 +130,8 @@ io.on('connection', (socket) => {
 
                     const f1 = await User.findByName(user.username)
                     const f2 = await User.findByName(player2.username)
+
+                    const playServer = findServer()
                     
                     if (data === "chess"){
                         const chess = new Chess({
@@ -137,13 +144,15 @@ io.on('connection', (socket) => {
                         const flowers = {
                             playRoom: chess._id,
                             gameType: data,
-                            shape: shape[0]
+                            shape: shape[0],
+                            playServer: playServer
                         }
 
                         const buquets = {
                             playRoom: chess._id,
                             gameType: data,
-                            shape: shape[1]
+                            shape: shape[1],
+                            playServer: playServer
                         }
 
                         io.to(player2.id).emit('invite', flowers)
@@ -159,7 +168,8 @@ io.on('connection', (socket) => {
                         const flowers = {
                             playRoom: tic._id,
                             gameType: data,
-                            shape: shape[0]
+                            shape: shape[0],
+                            playServer: playServer
                         }
                         
                         // Add gameType
@@ -167,7 +177,8 @@ io.on('connection', (socket) => {
                         const buquets = {
                             playRoom: tic._id,
                             gameType: data,
-                            shape: shape[1]
+                            shape: shape[1],
+                            playServer: playServer
                         }
 
 
@@ -204,6 +215,8 @@ io.on('connection', (socket) => {
                     const f1 = await User.findByName(nextPhase[i])
                     const f2 = await User.findByName(nextPhase[i+1])
 
+                    const playServer = findServer()
+
                     if (gameType === "chess"){
                         const chess = new Chess({
                             player1: f1._id,
@@ -217,7 +230,8 @@ io.on('connection', (socket) => {
                         const flowers = {
                             playRoom: chess._id,
                             tournament: tournament._id,
-                            gameType: gameType
+                            gameType: gameType,
+                            playServer: playServer
                         }
 
                         io.to(getID(nextPhase[i])).emit('tour-inv', flowers, shape[0])
@@ -237,7 +251,8 @@ io.on('connection', (socket) => {
                         const flowers = {
                             playRoom: tic._id,
                             tournament: tournament._id,
-                            gameType: gameType
+                            gameType: gameType,
+                            playServer: playServer
                         }
 
                         io.to(getID(nextPhase[i])).emit('tour-inv', flowers, shape[0])
@@ -306,6 +321,25 @@ zoo_children((children, error)=> {
 
     // console.log(playmasters)
 })
+
+const findServer = () => {
+    if (playmasters.length !== 0) {
+
+        prep = playmasters[chosenOne]
+
+        if (typeof prep === "undefined"){
+            chosenOne = 0 
+            prep = playmasters[chosenOne]
+        }
+
+        if(chosenOne === playmasters.length -1 || chosenOne >= playmasters.length){
+            chosenOne = 0
+        } else {
+            chosenOne += 1
+        }
+        return prep
+    }
+}
 
 app.use(express.json())
 app.use(userRouter)
