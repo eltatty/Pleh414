@@ -5,7 +5,7 @@ const zoo_con = ()=>{
     const client = zookeeper.createClient('localhost:2181')
     const path = "/Playmaster/Playm1"
 
-    client.connect();
+    client.connect()
 
     client.once('connected', function () {
         console.log('Connected to zookeeper server.');

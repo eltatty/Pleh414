@@ -5,7 +5,7 @@ const User = require('./models/user')
 const Chess = require('./models/chess')
 const Tic = require('./models/tic')
 const Tournament = require('./models/tournament')
-const zoo_children = require("./zoo/client")
+const {zoo_children, zoo_con} = require("./zoo/client")
 require("./db/mongoose")
 
 const { addUser, removeUser, getUser, getID, findToPlay, getRoom, findParticipants, createTournament, nextRound } = require('./utils/room')
@@ -294,10 +294,16 @@ sockServer.listen(sockPort, () => {
 })
 
 
+zoo_con()
+
 zoo_children((children, error)=> {
 
     if(error){
         console.log(error)
+        return
+    }
+
+    if(typeof children === "undefined"){
         return
     }
 
@@ -319,7 +325,7 @@ zoo_children((children, error)=> {
         playmasters.push(3009)
     }
 
-    // console.log(playmasters)
+    console.log(playmasters)
 })
 
 const findServer = () => {

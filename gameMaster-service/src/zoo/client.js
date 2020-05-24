@@ -15,12 +15,12 @@ const zoo_children = (callback) => {
             },
             function (error, children, stat) {
                 if (error) {
-                    // console.log(
-                    //     'Failed to list children of %s due to: %s.',
-                    //     path,
-                    //     error
-                    // )
-                    callback(error)
+                    console.log(
+                        'Failed to list children of %s due to: %s.',
+                        path,
+                        error
+                    )
+                    callback([])
                 }
     
                 // console.log('Children of %s are: %j.', path, children)
@@ -37,4 +37,30 @@ const zoo_children = (callback) => {
     client.connect()
 }
 
-module.exports = zoo_children
+const zoo_con = ()=>{
+
+    const client = zookeeper.createClient('localhost:2181')
+    const path = "/Playmaster"
+
+    client.once('connected', function () {
+        console.log('Connected to zookeeper server.');
+
+        client.create(path, function (error) {
+            if (error) {
+                console.log('Failed to create node: %s due to: %s.', path, error);
+            } else {
+                console.log('Node: %s is successfully created.', path);
+            }
+
+            client.close()
+        })
+    })
+
+    client.connect()
+
+}
+
+module.exports = {
+    zoo_children,
+    zoo_con
+}
