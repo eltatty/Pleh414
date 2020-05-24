@@ -2,7 +2,11 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3007", {
+const socket = io.connect("http://localhost:3006", {
+    reconnection:true
+})
+
+const socket2 = io.connect("http://localhost:3007", {
     reconnection:true
 })
 
@@ -11,8 +15,16 @@ socket.on('connect', function () {
 })
 
 socket.on('message', (message) => {
+    console.log('3006 ==> ')
     console.log(message)
 })
+
+socket2.on('message', (message) => {
+    console.log('3007 ==> ')
+    console.log(message)
+})
+
+
 socket.on('move_back', (message) => {
     console.log(message)
 })
@@ -37,22 +49,22 @@ document.querySelector('#join').addEventListener('click', () => {
     console.log('Try to join')
     const username = document.getElementById('joker').value
     console.log(username)
-    data = {
-        username: username, 
-        room: "5ebd85a142e97c424cc9898e",
-        gameType: "tic"
-    }
-    socket.emit('join', data, (error) => {
-        if (error) {
-            alert(error)
-        }
-    })
-
-    // socket.emit('join', {username}, (error) => {
+    // data = {
+    //     username: username, 
+    //     room: "5ebd85a142e97c424cc9898e",
+    //     gameType: "tic"
+    // }
+    // socket.emit('join', data, (error) => {
     //     if (error) {
     //         alert(error)
     //     }
     // })
+
+    socket.emit('join', {username}, (error) => {
+        if (error) {
+            alert(error)
+        }
+    })
 })
 
 document.querySelector('#play').addEventListener('click', () => {

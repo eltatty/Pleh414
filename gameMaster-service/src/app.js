@@ -5,21 +5,20 @@ const User = require('./models/user')
 const Chess = require('./models/chess')
 const Tic = require('./models/tic')
 const Tournament = require('./models/tournament')
+const zoo_children = require("./zoo/client")
 require("./db/mongoose")
 
 const { addUser, removeUser, getUser, getID, findToPlay, getRoom, findParticipants, createTournament, nextRound } = require('./utils/room')
 
 const app = express()
-
 const sockPort = process.env.PORT || 3006
-
 const userRouter = require("./routers/user")
-
 const sockServer = http.createServer(app)
 const io = socketio(sockServer)
-
 const room = "live"
 const shape = ["X", "O"]
+
+let playmasters = [3007, 3008, 3009]
 
 io.on('connection', (socket) => {
     console.log('New WebSocket connection')
@@ -277,6 +276,35 @@ app.get('/', (req, res) => {
 
 sockServer.listen(sockPort, () => {
     console.log(`Socket is up on port ${sockPort}!`)
+})
+
+
+zoo_children((children, error)=> {
+
+    if(error){
+        console.log(error)
+        return
+    }
+
+    if(!children.includes("Playm1")) {
+        playmasters = playmasters.filter((node) => node !== 3007)
+    } else if(!playmasters.includes(3007)){
+        playmasters.push(3007)
+    }
+
+    if(!children.includes("Playm2")) {
+        playmasters = playmasters.filter((node) => node !== 3008)
+    } else if(!playmasters.includes(3008)){
+        playmasters.push(3008)
+    }
+
+    if(!children.includes("Playm3")) {
+        playmasters = playmasters.filter((node) => node !== 3009)
+    } else if(!playmasters.includes(3009)){
+        playmasters.push(3009)
+    }
+
+    // console.log(playmasters)
 })
 
 app.use(express.json())

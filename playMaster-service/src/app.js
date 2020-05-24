@@ -5,6 +5,7 @@ const Chess = require('./models/chess')
 const Tic = require('./models/tic')
 const User = require('./models/user')
 const trade = require('./utils/game')
+// const zoo_con = require("./zoo/client")
 
 require("./db/mongoose")
 
@@ -23,7 +24,6 @@ const socket2 = io2.connect("http://localhost:3006", {
 
 io.on('connection', (socket) => {
     console.log('New websocket connection!')
-
 
     socket.on('join', (data) => {
         console.log(data)
@@ -87,3 +87,6 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
     console.log('Listening on ' + port)
 })
+
+
+// zoo_con()
