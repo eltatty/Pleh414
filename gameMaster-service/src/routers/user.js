@@ -2,7 +2,7 @@ const express = require('express')
 const router = new express.Router()
 const auth = require('../middleware/auth')
 const User = require('../models/user')
-const { getTournaments, getUsers } = require('../utils/room')
+const { getTournaments, getUsers, serverTrack } = require('../utils/room')
 
 // Routes
 
@@ -92,6 +92,15 @@ router.get('/userStats/:name', auth, async (req, res) => {
 
     } catch (e) {
         res.status(500).send()
+    }
+})
+
+router.get('/server_games', auth, async (req, res) => {
+    if(req.user.role !== "admin"){
+        res.status(500).send("You have no power here!")
+    } else {
+        const answer = serverTrack(null, null, 1)
+        res.status(200).send(answer)
     }
 })
 

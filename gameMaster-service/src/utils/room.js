@@ -1,8 +1,9 @@
-const User = require("../models/user")
-require("../db/mongoose")
+// const User = require("../models/user")
+// require("../db/mongoose")
 
 const users = []
 const tournaments = []
+let server_games = []
 
 
 const addUser = ({ id, username }) => {
@@ -224,6 +225,19 @@ const nextRound = async (name, tourID) => {
     }
 }
 
+
+const serverTrack = (gameID, server, type, opt) => {
+
+    if(opt === 1){
+        return server_games
+    } else if(opt === 2){
+        server_games = server_games.filter((element) => element.server !== server)
+    } else {
+        const pair = {gameID, type, server}
+        server_games.push(pair)
+    }
+}
+
 module.exports = {
     addUser,
     removeUser,
@@ -235,60 +249,21 @@ module.exports = {
     nextRound,
     getTournaments,
     getUsers,
-    getID
+    getID, 
+    serverTrack
 }
 
+// serverTrack("3r13f", 3007, null)
+// serverTrack("3213f", 3008, null)
+// serverTrack("3d13f", 3007, null)
+// serverTrack("3f13f", 3008, null)
+// serverTrack("3g13f", 3007, null)
+// serverTrack("3113f", 3007, null)
 
-// addUser({
-//     id: 1,
-//     username: "user1"
-// })
+// console.log(serverTrack(null, null, 1))
 
-
-// addUser({
-//     id: 2,
-//     username: "user2"
-// })
-
-// addUser({
-//     id: 3,
-//     username: "user3"
-// })
-
-// addUser({
-//     id: 4,
-//     username: "user4"
-// })
-
-// addUser({
-//     id: 5,
-//     username: "user5"
-// })
-
-// addUser({
-//     id: 6,
-//     username: "user6"
-// })
-
-// addUser({
-//     id: 7,
-//     username: "user7"
-// })
-
-// addUser({
-//     id: 8,
-//     username: "user8"
-// })
-
-// createTournament(findParticipants(1,2), "5eaee5ba09cfff36a553630e", "tic")
+// console.log("========================")
 
 
-// console.log(nextRound("user1", "5eaee5ba09cfff36a553630e"))
-// nextRound("user2", "5eaee5ba09cfff36a553630e")
-// nextRound("user3", "5eaee5ba09cfff36a553630e")
-// nextRound("user4", "5eaee5ba09cfff36a553630e")
-// // ///
-// nextRound("user1", "5eaee5ba09cfff36a553630e")
-// nextRound("user3", "5eaee5ba09cfff36a553630e")
-// // // ///
-// nextRound("user1", "5eaee5ba09cfff36a553630e")
+// serverTrack(null, 3007, 2)
+// console.log(serverTrack(null, null, 1))

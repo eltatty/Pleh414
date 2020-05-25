@@ -15,6 +15,10 @@ socket.on('message', (message) => {
     console.log(message)
 })
 
+socket.on('new_server', (message) => {
+    console.log("Got you fam!")
+    console.log(message)
+})
 
 socket.on('move_back', (message) => {
     console.log(message)

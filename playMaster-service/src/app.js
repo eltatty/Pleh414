@@ -77,10 +77,6 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('playTest', () => {
-        console.log("Hello from chat-app on playTest!")
-        socket2.emit('test')
-    })
 })
 
 

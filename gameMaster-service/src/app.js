@@ -8,7 +8,7 @@ const Tournament = require('./models/tournament')
 const {zoo_children, zoo_con} = require("./zoo/client")
 require("./db/mongoose")
 
-const { addUser, removeUser, getUser, getID, findToPlay, getRoom, findParticipants, createTournament, nextRound } = require('./utils/room')
+const { addUser, removeUser, getUser, getID, findToPlay, getRoom, findParticipants, createTournament, nextRound, serverTrack } = require('./utils/room')
 
 const app = express()
 const sockPort = process.env.PORT || 3006
@@ -75,12 +75,13 @@ io.on('connection', (socket) => {
                         tournament.games.push(chess)
 
                         const flowers = {
-                            playRoom: tic._id,
+                            playRoom: chess._id,
                             tournament: tournament._id,
                             gameType: options.gameType,
                             playServer: playServer
                         }
 
+                        serverTrack(chess._id, playServer, options.gameType, null)
 
                         io.to(participants[i].id).emit('tour-inv', flowers, shape[0])
                         io.to(participants[i+1].id).emit('tour-inv', flowers, shape[1])
@@ -100,6 +101,8 @@ io.on('connection', (socket) => {
                             gameType: options.gameType,
                             playServer: playServer
                         }
+
+                        serverTrack(tic._id, playServer, options.gameType, null)
 
                         io.to(participants[i].id).emit('tour-inv', flowers, shape[0])
                         io.to(participants[i+1].id).emit('tour-inv', flowers, shape[1])
@@ -155,6 +158,10 @@ io.on('connection', (socket) => {
                             playServer: playServer
                         }
 
+
+                        serverTrack(chess._id, playServer, data, null)
+
+
                         io.to(player2.id).emit('invite', flowers)
                         return callback(buquets)
                     } else {
@@ -180,6 +187,8 @@ io.on('connection', (socket) => {
                             shape: shape[1],
                             playServer: playServer
                         }
+
+                        serverTrack(tic._id, playServer, data, null)
 
 
                         io.to(player2.id).emit('invite', flowers)
@@ -234,6 +243,8 @@ io.on('connection', (socket) => {
                             playServer: playServer
                         }
 
+                        serverTrack(chess._id, playServer, gameType, null)
+
                         io.to(getID(nextPhase[i])).emit('tour-inv', flowers, shape[0])
                         io.to(getID(nextPhase[i+1])).emit('tour-inv', flowers, shape[1])
 
@@ -254,6 +265,8 @@ io.on('connection', (socket) => {
                             gameType: gameType,
                             playServer: playServer
                         }
+
+                        serverTrack(tic._id, playServer, gameType, null)
 
                         io.to(getID(nextPhase[i])).emit('tour-inv', flowers, shape[0])
                         io.to(getID(nextPhase[i+1])).emit('tour-inv', flowers, shape[1])
@@ -279,11 +292,53 @@ io.on('connection', (socket) => {
         }
     })
 
-    socket.on('test', () => {
-        console.log("PlayMaster says hi in gameMaster!")
-    })
-
 })
+
+
+const reload_balancing = (server) => {
+    const load = serverTrack(null, null, null, 1)
+    const clear = load.filter((element) => element.server === server)
+
+    serverTrack(null, server, null, 2)
+
+    if (clear.length !== 0 ){
+
+        clear.forEach( async (pair) => {
+
+            try {
+
+                const playServer = findServer()
+
+                if(pair.type === "chess"){
+                    const game = await Chess.findById(pair.gameID)
+
+                    const f1 = await User.findById(game.player1)
+                    const f2 = await User.findById(game.player2)
+
+                    serverTrack(pair.gameID, playServer, pair.type, null)
+
+                    io.to(getID(f1.name)).emit('new_server', playServer)
+                    io.to(getID(f2.name)).emit('new_server', playServer)
+
+                } else if(pair.type === "tic") {
+                    const game = await Tic.findById(pair.gameID)
+
+                    const f1 = await User.findById(game.player1)
+                    const f2 = await User.findById(game.player2)
+
+                    serverTrack(pair.gameID, playServer, pair.type, null)
+
+                    io.to(getID(f1.name)).emit('new_server', playServer)
+                    io.to(getID(f2.name)).emit('new_server', playServer)
+
+                }
+
+            } catch (e) {
+                console.log(e)
+            }
+        })
+    }
+}
 
 app.get('/', (req, res) => {
     res.send('Game Master Service')
@@ -309,18 +364,21 @@ zoo_children((children, error)=> {
 
     if(!children.includes("Playm1")) {
         playmasters = playmasters.filter((node) => node !== 3007)
+        reload_balancing(3007)
     } else if(!playmasters.includes(3007)){
         playmasters.push(3007)
     }
 
     if(!children.includes("Playm2")) {
         playmasters = playmasters.filter((node) => node !== 3008)
+        reload_balancing(3008)
     } else if(!playmasters.includes(3008)){
         playmasters.push(3008)
     }
 
     if(!children.includes("Playm3")) {
         playmasters = playmasters.filter((node) => node !== 3009)
+        reload_balancing(3009)
     } else if(!playmasters.includes(3009)){
         playmasters.push(3009)
     }
