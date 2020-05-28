@@ -2,6 +2,29 @@ const Chess = require('../models/chess')
 const Tic = require('../models/tic')
 const User = require('../models/user')
 
+const repairs = []
+
+const repair = (data, sockID) => {
+    const index = repairs.findIndex((element) => element.data.room === data.room)
+    if(index == -1){
+        const values = {data, sockID}
+        repairs.push(values)
+        return 1
+    } else {
+        if(data.play === 0 && repairs[index].data.play === 0){
+            repairs.splice(index, 1)[0]
+            return 1
+        } else if(data.play !== 0){
+            repairs.splice(index, 1)[0]
+            return sockID
+        } else {
+            const ask = repairs[index].sockID 
+            repairs.splice(index, 1)[0]
+            return ask
+        }
+    }
+}
+
 const trade = async (data, game, tour) => {
     try {
         if(data.winner !== ''){
@@ -9,8 +32,10 @@ const trade = async (data, game, tour) => {
             const user = await User.findByName(data.winner)
 
             if (user._id.equals(game.player1)){
-                game.winner = game.player1
-                game.loser = game.player2
+                game.winner = user.name
+                const us2 = await User.find({ "_id" : game.player2 })
+                // console.log(us2.name)
+                game.loser = us2[0].name
 
                 if(!tour){
 
@@ -27,8 +52,10 @@ const trade = async (data, game, tour) => {
                 
 
             } else {
-                game.winner = game.player2
-                game.loser = game.player1
+                game.winner = user.name
+                const us2 = await User.find({ "_id" : game.player1 })
+                // console.log(us2[0].name)
+                game.loser = us2[0].name
 
                 if(!tour){
 
@@ -56,7 +83,7 @@ const trade = async (data, game, tour) => {
 }
 
 
-module.exports = trade
-
-
-
+module.exports = {
+    trade,
+    repair
+}

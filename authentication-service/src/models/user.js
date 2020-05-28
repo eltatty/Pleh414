@@ -82,6 +82,7 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 },)
 
+
 userSchema.methods.generateAuthToken = async function() {
     const user = this
 
@@ -89,7 +90,7 @@ userSchema.methods.generateAuthToken = async function() {
 
     user.tokens = user.tokens.concat({token})
     await user.save()
-
+    
     return token
 }
 
@@ -133,7 +134,6 @@ userSchema.pre('save', function (next) {
     }
     next()
 })
-
 
 const User = mongoose.model('User', userSchema)
 

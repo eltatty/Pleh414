@@ -82,6 +82,20 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 },)
 
+
+userSchema.virtual('wchesses', {
+    ref: 'Chess',
+    localField: 'name',
+    foreignField: 'winner'
+})
+
+userSchema.virtual('lchesses', {
+    ref: 'Chess',
+    localField: 'name',
+    foreignField: 'loser'
+})
+
+
 userSchema.methods.generateAuthToken = async function() {
     const user = this
 
@@ -89,7 +103,7 @@ userSchema.methods.generateAuthToken = async function() {
 
     user.tokens = user.tokens.concat({token})
     await user.save()
-
+    
     return token
 }
 
@@ -125,7 +139,6 @@ userSchema.pre('save', async function (next) {
     }
     next()
 })
-
 
 userSchema.pre('save', function (next) {
     const user = this

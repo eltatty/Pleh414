@@ -27,6 +27,8 @@ io.on('connection', (socket) => {
     socket.on('join', (options, callback) => {
         console.log(options)
 
+        console.log("Sockid:" + socket.id)
+
         const { error, user } = addUser({ id: socket.id, ...options })
 
         if (error) {
@@ -327,6 +329,12 @@ const reload_balancing = (server) => {
                     const f2 = await User.findById(game.player2)
 
                     serverTrack(pair.gameID, playServer, pair.type, null)
+
+                    console.log(playServer)
+                    console.log(f1.name)
+                    console.log(getID(f1.name))
+                    console.log(f2.name)
+                    console.log(getID(f2.name))
 
                     io.to(getID(f1.name)).emit('new_server', playServer)
                     io.to(getID(f2.name)).emit('new_server', playServer)

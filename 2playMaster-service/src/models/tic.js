@@ -18,12 +18,14 @@ const ticSchema = new mongoose.Schema({
         type: Number
     }, 
     winner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User' 
+        type: mongoose.Schema.Types.String,
+        ref: 'User',
+        field: 'name' 
     }, 
     loser: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User' 
+        type: mongoose.Schema.Types.String,
+        ref: 'User',
+        field: 'name'
     }
 },  {
     timestamps: true

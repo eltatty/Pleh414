@@ -2,6 +2,8 @@ const express = require('express')
 const router = new express.Router()
 const auth = require('../middleware/auth')
 const User = require('../models/user')
+const Chess = require('../models/chess')
+const Tic = require('../models/tic')
 const { getTournaments, getUsers, serverTrack } = require('../utils/room')
 
 // Routes
@@ -29,6 +31,43 @@ router.get('/liveTournaments', auth, (req, res) => {
     }
 })
 
+router.get('/chesses', auth, async (req, res) => {
+    try {
+
+        const games = await Chess.find({}, {winner:1, loser:1, _id:0}).or([{player1: req.user._id}, {player2: req.user._id}]).lean()
+
+        games.forEach((game) => {
+            if (req.user.name === game.winner){
+                game.outcome = "Win"
+            } else {
+                game.outcome = "Loss"
+            }
+        })
+
+        res.status(200).send(games)
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+router.get('/tics', auth, async (req, res) => {
+    try {
+
+        const games = await Tic.find({}, {winner:1, loser:1, _id:0}).or([{player1: req.user._id}, {player2: req.user._id}]).lean()
+
+        games.forEach((game) => {
+            if (req.user.name === game.winner){
+                game.outcome = "Win"
+            } else {
+                game.outcome = "Loss"
+            }
+        })
+
+        res.status(200).send(games)
+    } catch (e) {
+        console.log(e)
+    }
+})
 
 router.get('/liveUsers', auth, (req, res) => {
     try {

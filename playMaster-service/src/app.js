@@ -4,7 +4,7 @@ const socketio = require('socket.io')
 const Chess = require('./models/chess')
 const Tic = require('./models/tic')
 const User = require('./models/user')
-const trade = require('./utils/game')
+const {trade, repair} = require('./utils/game')
 const zoo_con = require("./zoo/client")
 
 require("./db/mongoose")
@@ -26,10 +26,17 @@ io.on('connection', (socket) => {
     console.log('New websocket connection!')
 
     socket.on('join', (data) => {
-        console.log(data)
+        console.log(data, socket.id)
         
         socket.join(data.room)
-        socket.broadcast.to(data.room).emit('second_move')
+
+        const opt = repair(data, socket.id)
+
+        if(opt === 1){
+            socket.broadcast.to(data.room).emit('first_move')
+        } else {
+            io.to(opt).emit('first_move')
+        }
     })
     
 
