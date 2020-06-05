@@ -36,7 +36,10 @@ router.get('/chesses', auth, async (req, res) => {
 
         const games = await Chess.find({}, {winner:1, loser:1, _id:0}).or([{player1: req.user._id}, {player2: req.user._id}]).lean()
 
-        games.forEach((game) => {
+
+        clean_games = games.filter((game) => typeof game.winner !== "undefined")
+
+        clean_games.forEach((game) => {
             if (req.user.name === game.winner){
                 game.outcome = "Win"
             } else {
@@ -44,7 +47,7 @@ router.get('/chesses', auth, async (req, res) => {
             }
         })
 
-        res.status(200).send(games)
+        res.status(200).send(clean_games)
     } catch (e) {
         console.log(e)
     }
@@ -55,7 +58,9 @@ router.get('/tics', auth, async (req, res) => {
 
         const games = await Tic.find({}, {winner:1, loser:1, _id:0}).or([{player1: req.user._id}, {player2: req.user._id}]).lean()
 
-        games.forEach((game) => {
+        clean_games = games.filter((game) => typeof game.winner !== "undefined")
+
+        clean_games.forEach((game) => {
             if (req.user.name === game.winner){
                 game.outcome = "Win"
             } else {
@@ -63,7 +68,7 @@ router.get('/tics', auth, async (req, res) => {
             }
         })
 
-        res.status(200).send(games)
+        res.status(200).send(clean_games)
     } catch (e) {
         console.log(e)
     }
@@ -76,7 +81,12 @@ router.get('/liveUsers', auth, (req, res) => {
         // } else {
         //     res.status(200).send(getUsers())
         // }
-        res.status(200).send(getUsers())
+        const data = []
+        package = getUsers()
+        package.users.forEach((pair) => {
+            data.push(pair.username)
+        })
+        res.status(200).send(data)
     } catch (e) {
         res.status(500).send(e)
     }

@@ -2,7 +2,7 @@
 
 // const io = require('socket.io-client')
 
-const socket = io.connect("http://localhost:3007", {
+const socket = io.connect("http://localhost:3006", {
     reconnection:true
 })
 
